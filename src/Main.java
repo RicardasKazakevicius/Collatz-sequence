@@ -9,8 +9,8 @@ public class Main {
  
     public static void main(String args[]) throws InterruptedException {
         int maxThreads = 32; // maximum number of threads in performance test
-        int n = 5000000; // array size
-        int intervalSize = 500;
+        int n = 500000; // array size
+        int intervalSize = 1;
         long array[] = new long[n];
         
         // creating array with numbers from 1 to n
@@ -20,49 +20,59 @@ public class Main {
         
         // storage is for seting number with most iterations
         Storage storage = new Storage();
-        
-        double speedUp = 0; // how many times threads work faster
-        double time = 0; // one thread word time
-        System.out.println("Threads  TimeSec  SpeedUp");
-        
+        boolean last = false; //
+
         // running multithreading performace test
-        for (int threads = 1; threads <= maxThreads; threads *= 2) {
+        while (intervalSize <= n) {
             
-             // creating and initializing divider
-            Divider divider = new Divider();
-            divider.initialize(array, intervalSize);
-        
-            long time0 = System.currentTimeMillis();
+            double speedUp = 0; // how many times threads work faster
+            double time = 0; // one thread word time
+            System.out.println("Threads IntervalSize TimeSec SpeedUp");
             
-            storage = new Storage();
-            
-            // creating threads
-            Finder[] finder = new Finder[threads];
+            for (int threads = 1; threads <= maxThreads; threads *= 2) {
 
-            for (int i = 0; i < threads; ++i) {
-                finder[i] = new Finder(i, divider, storage);
-                finder[i].start();
-            }
+                 // creating and initializing divider
+                Divider divider = new Divider();
+                divider.initialize(array, intervalSize);
 
-            for (int i = 0; i < threads; ++i) {
-                finder[i].join();
-            }
-            
-            long time1 = System.currentTimeMillis();
+                long time0 = System.currentTimeMillis();
 
-            double dtime = (time1-time0)/1000.;
-            
-            if (threads == 1) {
-                speedUp = 1;
-                time = dtime;
+                storage = new Storage();
+
+                // creating threads
+                Finder[] finder = new Finder[threads];
+
+                for (int i = 0; i < threads; ++i) {
+                    finder[i] = new Finder(i, divider, storage);
+                    finder[i].start();
+                }
+
+                for (int i = 0; i < threads; ++i) {
+                    finder[i].join();
+                }
+
+                long time1 = System.currentTimeMillis();
+
+                double dtime = (time1-time0)/1000.;
+
+                if (threads == 1) {
+                    speedUp = 1;
+                    time = dtime;
+                }
+                else {
+                    speedUp = time / dtime;
+                }
+
+                System.out.println(threads + "        " + intervalSize + "            "  +
+                        dtime + "    " + speedUp);
             }
-            else {
-                speedUp = time / dtime;
+            System.out.println("");
+            intervalSize *= 10;
+            if (intervalSize > n && !last) {
+                intervalSize = n;
+                last = true;
             }
-           
-            System.out.println(threads + "        " + dtime + "    " + speedUp);
         }
-        
         System.out.println("");
         System.out.println("Number with most iterations is: " + storage.getNumber());        
     }
