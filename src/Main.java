@@ -9,10 +9,11 @@ public class Main {
  
     public static void main(String args[]) throws InterruptedException {
         int maxThreads = 32; // maximum number of threads in performance test
-        int n = 500000; // array size
+        int n = 5000000; // array size
         int intervalSize = 1;
         long array[] = new long[n];
-        
+        int thread[] = {1,2,4,8,12,16};
+       
         // creating array with numbers from 1 to n
         for (int i = 0; i < n; ++i) {
             array[i] = i + 1;
@@ -29,8 +30,8 @@ public class Main {
             double time = 0; // one thread word time
             System.out.println("Threads IntervalSize TimeSec SpeedUp");
             
-            for (int threads = 1; threads <= maxThreads; threads *= 2) {
-
+            //for (int threads = 1; threads <= maxThreads; threads *= 2) {
+            for (int threads: thread) {
                  // creating and initializing divider
                 Divider divider = new Divider();
                 divider.initialize(array, intervalSize);
