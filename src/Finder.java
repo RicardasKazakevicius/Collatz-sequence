@@ -48,6 +48,12 @@ public class Finder extends Thread{
         return iterations;
     }
     
+    public void find(long[] array) {           
+        
+        findNumberWithMostIterations(array);       
+        storage.setNumber(mostIterations, numberWithMostIterations);
+    }
+    
     @Override
     public void run() {
        
